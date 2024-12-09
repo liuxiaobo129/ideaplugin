@@ -2,6 +2,12 @@ package org.example.demoplugin;
 
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.openapi.ui.Messages;
+import git4idea.GitUtil;
+import git4idea.commands.Git;
+import git4idea.commands.GitCommand;
+import git4idea.commands.GitLineHandler;
+import git4idea.repo.GitRepository;
 import org.example.demoplugin.ui.SettingUI;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +17,12 @@ import javax.swing.*;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+
+
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import git4idea.repo.GitRepositoryManager;
 
 public class SettingFactory implements SearchableConfigurable {
 
@@ -61,4 +73,26 @@ public class SettingFactory implements SearchableConfigurable {
         }
     }
 
+}
+
+
+
+
+ class CustomGitAction extends AnAction {
+    @Override
+    public void actionPerformed(AnActionEvent e) {
+        var project = e.getProject();
+        // 获取当前 Git 仓库
+        GitRepository repositoryForFileQuick = GitUtil.getRepositoryManager(project).getRepositoryForFileQuick(project.getBaseDir());
+
+        if (project != null) {
+            var repositoryManager = GitRepositoryManager.getInstance(project);
+            var repositories = repositoryManager.getRepositories();
+            for (var repo : repositories) {
+                repo.getRemotes();
+                System.out.println("Repository: " + repo.getRoot());
+            }
+        }
+
+    }
 }

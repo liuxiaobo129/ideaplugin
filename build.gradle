@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("org.jetbrains.intellij") version "1.17.4"
+    id 'io.franzbecker.gradle-lombok' version '1.14'
 }
 
 group = "org.example"
@@ -10,12 +11,17 @@ repositories {
     mavenCentral()
 }
 
+lombok {
+    version = '1.18.30'
+    sha256 = ""
+}
+
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
     version.set("2023.2.6")
     type.set("IC") // Target IDE Platform
-
+    plugins.set(["Git4Idea"])
 //    plugins.set(listOf(/* Plugin Dependencies */))
 }
 
@@ -35,4 +41,18 @@ tasks {
     publishPlugin {
         token.set(System.getenv("PUBLISH_TOKEN"))
     }
+}
+
+dependencies {
+    implementation group: 'commons-io', name: 'commons-io', version: '2.4'
+    implementation group: 'org.gitlab', name: 'java-gitlab-api', version: '4.0.0'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    // 向编译任务添加 JVM 参数，解决 Lombok 和 JDK 模块访问问题
+    options.compilerArgs.addAll([
+            '--add-opens', 'jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED',
+            '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+            '--add-opens', 'java.base/java.lang.reflect=ALL-UNNAMED'
+    ])
 }

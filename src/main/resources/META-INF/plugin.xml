@@ -20,32 +20,78 @@
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
-    <depends>com.intellij.modules.platform</depends>
+<!--    <depends>com.intellij.modules.platform</depends>-->
 
-    <!-- Extension points defined by the plugin.
-         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
-    <extensions defaultExtensionNs="com.intellij">
+<!--    &lt;!&ndash; Extension points defined by the plugin.-->
+<!--         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html &ndash;&gt;-->
+<!--    <extensions defaultExtensionNs="com.intellij">-->
 
-<!--        <toolWindow id="httpRunner" factoryClass="org.example.demoplugin.HttpRunnerToolWindowFactory"  anchor="left"/>-->
+<!--&lt;!&ndash;        <toolWindow id="httpRunner" factoryClass="org.example.demoplugin.HttpRunnerToolWindowFactory"  anchor="left"/>&ndash;&gt;-->
 
-        <!-- Add your extensions here -->
-        <!-- 配置 File -> Settings -> Tools -->
-        <projectConfigurable groupId="tools" displayName="My Test Config" id="test.id"
-                             instance="org.example.demoplugin.SettingFactory"/>
+<!--        &lt;!&ndash; Add your extensions here &ndash;&gt;-->
+<!--        &lt;!&ndash; 配置 File -> Settings -> Tools &ndash;&gt;-->
+<!--        <projectConfigurable groupId="tools" displayName="My Test Config" id="test.id"-->
+<!--                             instance="org.example.demoplugin.SettingFactory"/>-->
 
-        <!-- 窗体 (IDEA 界面右侧) -->
-        <toolWindow id="Read-Book" secondary="false" anchor="right"
-                    factoryClass="org.example.demoplugin.ReadFactory"/>
-    </extensions>
+<!--        &lt;!&ndash; 窗体 (IDEA 界面右侧) &ndash;&gt;-->
+<!--        <toolWindow id="Read-Book" secondary="false" anchor="right"-->
+<!--                    factoryClass="org.example.demoplugin.ReadFactory"/>-->
+<!--    </extensions>-->
 
-<!--    加入action-->
-    <actions>
-        <action id="org.example.demoplugin.action.HelpAction" class="org.example.demoplugin.action.HelpAction"
-                text="HelpAction" description="HelpAction11">
-            <add-to-group group-id="HelpMenu" anchor="after" relative-to-action="About"/>
-        </action>
+<!--&lt;!&ndash;    加入action&ndash;&gt;-->
+<!--    <actions>-->
+<!--        <action id="org.example.demoplugin.action.HelpAction" class="org.example.demoplugin.action.HelpAction"-->
+<!--                text="HelpAction" description="HelpAction11">-->
+<!--            <add-to-group group-id="HelpMenu" anchor="after" relative-to-action="About"/>-->
+<!--        </action>-->
 
-    </actions>
+<!--    </actions>-->
+<!--    <depends>Git4Idea</depends>-->
+
+
+<depends>com.intellij.modules.platform</depends>
+<depends>com.intellij.modules.vcs</depends>
+
+<extensions defaultExtensionNs="com.intellij">
+
+    <!-- Configuration state service ( persistable settings ) -->
+    <applicationService serviceInterface="com.ppolivka.gitlabprojects.configuration.SettingsState"
+                        serviceImplementation="com.ppolivka.gitlabprojects.configuration.SettingsState"/>
+
+    <!-- provider for the configurable instance ( configuration settings ) -->
+    <projectConfigurable id="GitLabConfigurableProvider"
+                         provider="com.ppolivka.gitlabprojects.configuration.SettingsConfigurableProvider" parentId="project.propVCSSupport.Mappings" displayName="GitLab"/>
+    <projectService serviceInterface="com.ppolivka.gitlabprojects.configuration.ProjectState"
+                    serviceImplementation="com.ppolivka.gitlabprojects.configuration.ProjectState"/>
+
+</extensions>
+
+<extensions defaultExtensionNs="Git4Idea">
+    <gitRepositoryHostingService implementation="com.ppolivka.gitlabprojects.checkout.GitLabRepositoryHostingService"/>
+</extensions>
+
+<application-components>
+
+</application-components>
+
+<project-components>
+    <!-- Add your project components here -->
+</project-components>
+
+<actions>
+<!--    <action id="Gitlab.Share" class="com.ppolivka.gitlabprojects.share.GitLabShareAction">-->
+<!--        <add-to-group group-id="Vcs.Import"/>-->
+<!--    </action>-->
+    <group id="GitLabGroup" text="Git _Lab" popup="true" icon="/icons/gitLabSmall.png">
+        <action id="Gitlab.Create.Merge.Request" class="com.ppolivka.gitlabprojects.merge.request.GitLabMergeRequestAction"/>
+        <action id="Gitlab.Create.Merge.Request.List" class="com.ppolivka.gitlabprojects.merge.list.GitLabMergeRequestListAction"/>
+
+        <add-to-group group-id="Git.Menu"/>
+        <add-to-group group-id="Git.ContextMenu"/>
+    </group>
+</actions>
+
+<depends>Git4Idea</depends>
 
 
 </idea-plugin>
